@@ -14,7 +14,7 @@ class MediaController extends Controller
     public function index(Request $request)
     {
         // $permission = Permission::where("slug",  "auth.setting")->first();
-        PermissionUtils::check('auth.setting');
+        // PermissionUtils::check('auth.setting');
         // echo Admin::user()->can('auth.setting')." ".$request->get('path', '/');
 
         // check permission, only the roles with permission `create-page` can visit this action 
@@ -79,11 +79,22 @@ class MediaController extends Controller
 
         try {
             if ($manager->delete($files)) {
+
+                // Xóa permission 
+                foreach ($files as $file) {
+                    $permission = Permission::where('slug', "documents.".str_replace("/",  ".", $file))->first();
+                    
+                    if ($permission) {
+                        $permission->delete();
+                    }
+                }
+                
                 return response()->json([
                     'status'  => true,
                     'message' => trans('admin.delete_succeeded'),
                 ]);
             }
+
         } catch (\Exception $e) {
             return response()->json([
                 'status'  => true,
@@ -98,13 +109,13 @@ class MediaController extends Controller
         $new = $request->get('new');
 
         $manager = new MediaManager($path);
+        
+        // Cập nhật permission 
         $slug = "documents.".str_replace("/", ".", $path);
         $slug_new = "documents.".str_replace("/", ".", $new);
         $permission = Permission::where('slug', $slug)->first();
         $permission->slug = $slug_new;
         $permission->name = $slug_new;
-        // echo "Move...".$path." " . $new;
-        // echo "Move...".$slug." " . $slug_new;
 
         try {
             if ($manager->move($new) && $permission->save()) {
@@ -127,6 +138,8 @@ class MediaController extends Controller
         $name = $request->get('name');
 
         $manager = new MediaManager($dir);
+
+        // Quản lý permission 
         if ($dir != "/" && $dir != null) {
             $slug = "documents".str_replace("/", ".", $dir."/".$name);
         }
@@ -134,7 +147,6 @@ class MediaController extends Controller
             $slug = "documents".str_replace("/", ".", "/".$name);
         }
         $permission = new Permission(['name' => $slug, 'slug' => $slug]);
-        // echo "Slug ".$slug. " | ".$name." ".($dir."/".$name);
 
         try {
             if ($manager->newFolder($name) && $permission->save()) {
