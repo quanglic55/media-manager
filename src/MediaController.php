@@ -6,11 +6,18 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use OpenAdmin\Admin\Facades\Admin;
 use OpenAdmin\Admin\Layout\Content;
+use OpenAdmin\Admin\Auth\Database\Permission;
+use OpenAdmin\Admin\Auth\Permission as PermissionUtils;
 
 class MediaController extends Controller
 {
     public function index(Request $request)
     {
+        // $permission = Permission::where("slug",  "auth.setting")->first();
+        PermissionUtils::check('auth.setting');
+        // echo Admin::user()->can('auth.setting')." ".$request->get('path', '/');
+
+        // check permission, only the roles with permission `create-page` can visit this action 
         return Admin::content(function (Content $content) use ($request) {
             $path = $request->get('path', '/');
             $view = $request->get('view', 'table');
@@ -91,9 +98,16 @@ class MediaController extends Controller
         $new = $request->get('new');
 
         $manager = new MediaManager($path);
+        $slug = "documents.".str_replace("/", ".", $path);
+        $slug_new = "documents.".str_replace("/", ".", $new);
+        $permission = Permission::where('slug', $slug)->first();
+        $permission->slug = $slug_new;
+        $permission->name = $slug_new;
+        // echo "Move...".$path." " . $new;
+        // echo "Move...".$slug." " . $slug_new;
 
         try {
-            if ($manager->move($new)) {
+            if ($manager->move($new) && $permission->save()) {
                 return response()->json([
                     'status'  => true,
                     'message' => trans('admin.move_succeeded'),
@@ -113,9 +127,17 @@ class MediaController extends Controller
         $name = $request->get('name');
 
         $manager = new MediaManager($dir);
+        if ($dir != "/" && $dir != null) {
+            $slug = "documents".str_replace("/", ".", $dir."/".$name);
+        }
+        else {
+            $slug = "documents".str_replace("/", ".", "/".$name);
+        }
+        $permission = new Permission(['name' => $slug, 'slug' => $slug]);
+        // echo "Slug ".$slug. " | ".$name." ".($dir."/".$name);
 
         try {
-            if ($manager->newFolder($name)) {
+            if ($manager->newFolder($name) && $permission->save()) {
                 return response()->json([
                     'status'  => true,
                     'message' => trans('admin.move_succeeded'),
