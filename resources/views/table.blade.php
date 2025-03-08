@@ -29,9 +29,8 @@
                     {!! $item['preview'] !!}
 
                     <a @if(!$item['isDir'])target="_blank"@endif href="{{ $item['link'] }}" class="file-name" title="{{ $item['name'] }}">
-                        {{ $item['icon'] }} {{ basename($item['name']) }}
+                        {{ $item['icon'] }} {{ basename($item['name'])." ".$item['url'] }}
                     </a>
-
                 </td>
 
                 @if (!empty($select))
@@ -39,7 +38,7 @@
                         @if ($item['isDir'])
                             <span class="btn">&nbsp;</span>
                         @else
-                            <a href="javascript:{{$fn}}('{{ $item['url'] }}','{{ $item['name'] }}');@if ($close) window.close();@endif" class="btn btn-primary">{{ trans('admin.select') }}</a>
+                            <a href="javascript:{{$fn}}('{{ $item['url'] }}','{{ $item['name'] }}');@if ($close) window.close();@endif" class="btn btn-primary">{{ trans('admin.select')." ...".OpenAdmin\Admin\Facades\Admin::user()->can($item->slug) }}</a>
                         @endif
                     </td>
                 @else
