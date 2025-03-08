@@ -19,6 +19,7 @@
                 <th width="100px;">{{ trans('admin.size') }}</th>
             </tr>
             @foreach($list as $item)
+            @if (!$item['isDir'] || OpenAdmin\Admin\Facades\Admin::user()->can("documents".str_replace("/",  ".", explode("tai-lieu", $item['url'])[1])))
             <tr>
                 <td style="padding-top: 15px;">
                     <span class="file-select">
@@ -29,7 +30,7 @@
                     {!! $item['preview'] !!}
 
                     <a @if(!$item['isDir'])target="_blank"@endif href="{{ $item['link'] }}" class="file-name" title="{{ $item['name'] }}">
-                        {{ $item['icon'] }} {{ basename($item['name'])." ".$item['url'] }}
+                        {{ $item['icon'] }} {{ basename($item['name']) }}
                     </a>
                 </td>
 
@@ -57,6 +58,7 @@
                 <td>{{ $item['time'] }}&nbsp;</td>
                 <td>{{ $item['size'] }}&nbsp;</td>
             </tr>
+            @endif
             @endforeach
             </tbody>
         </table>
