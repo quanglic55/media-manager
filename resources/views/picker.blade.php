@@ -83,11 +83,11 @@
 
             @if (!empty($list))
                 @foreach($list as $item)
-                    <div class="file-item">
+                    <div class="file-item" @if(!$item['isDir']) data-path="{{ $item['url'] }}" @endif >
                         <div class="file-info">
                             {!! $item['preview'] !!}
                             @if(!$item['isDir'])
-                                <a data-path="{{ $item['url'] }}" class="file-name" title="{{ $item['name'] }}">
+                                <a class="file-name" title="{{ $item['name'] }}">
                                     {{ $item['icon'] }} {{ basename($item['name']) }}
                                 </a>
                             @else 
