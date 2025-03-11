@@ -69,7 +69,7 @@ class MediaController extends Controller
             //     'fn'        => $fn,
             // ]);
             
-        return view('open-admin-media::picker2', ['list' => $manager->ls('media-picker', false)]);
+        return view('open-admin-media::picker', ['list' => $manager->ls('media-picker', false)]);
 
             // if ($select) {
             //     $content->addBodyClass('hide-nav');
