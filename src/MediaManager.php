@@ -105,20 +105,18 @@ class MediaManager extends Extension
         }
     }
 
-    public function ls()
+    public function ls($routeName = "media-index", $isPreview = true)
     {
         if (!$this->exists()) {
             Handler::error('Error', "File or directory [$this->path] not exists");
-
             return [];
         }
 
         $files = $this->storage->files($this->path);
-
         $directories = $this->storage->directories($this->path);
 
-        return $this->formatDirectories($directories)
-            ->merge($this->formatFiles($files))
+        return $this->formatDirectories($directories, $routeName)
+            ->merge($this->formatFiles($files, $isPreview))
             ->sort(function ($item) {
                 return $item['name'];
             })->all();
@@ -217,14 +215,14 @@ class MediaManager extends Extension
         ];
     }
 
-    public function formatFiles($files = [])
+    public function formatFiles($files = [], $isPreview)
     {
-        $files = array_map(function ($file) {
+        $files = array_map(function ($file) use ($isPreview) {
             return [
                 'download' => route('media-download', compact('file')),
                 'icon'     => '',
                 'name'     => $file,
-                'preview'  => $this->getFilePreview($file),
+                'preview'  => $this->getFilePreview($file, $isPreview),
                 'isDir'    => false,
                 'size'     => $this->getFilesize($file),
                 'link'     => route('media-download', compact('file')),
@@ -236,25 +234,25 @@ class MediaManager extends Extension
         return collect($files);
     }
 
-    public function formatDirectories($dirs = [])
+    public function formatDirectories($dirs = [], $routeName)
     {
-        $url = route('media-index', ['path' => '__path__', 'view' => request('view')]);
+        $url = route($routeName, ['path' => '__path__', 'view' => request('view')]);
 
         $preview = "<a href=\"$url\"><span class=\"file-icon text-primary\"><i class=\"icon-folder\"></i></span></a>";
 
-        $dirs = array_map(function ($dir) use ($preview) {
+        $dirs = array_map(function ($dir) use ($preview, $routeName) {
             return [
-                'download' => '',
-                'icon'     => '',
-                'name'     => $dir,
+                'download' => '', 
+                'icon'     => '', 
+                'name'     => $dir, 
                 'preview'  => str_replace('__path__', $dir, $preview),
-                'isDir'    => true,
-                'size'     => '',
-                'link'     => route('media-index', ['path' => '/'.trim($dir, '/'), 'view' => request('view'), 'select' => request('select'), 'fn' => $this->select_fn]),
-                'url'      => $this->storage->url($dir),
-                'time'     => $this->getFileChangeTime($dir),
+                'isDir'    => true, 
+                'size'     => '', 
+                'link'     => route($routeName, ['path' => '/'.trim($dir, '/'), 'view' => request('view'), 'select' => request('select'), 'fn' => $this->select_fn]),
+                'url'      => $this->storage->url($dir), 
+                'time'     => $this->getFileChangeTime($dir), 
             ];
-        }, $dirs);
+        }, $dirs); 
 
         return collect($dirs);
     }
@@ -281,12 +279,11 @@ class MediaManager extends Extension
         return $navigation;
     }
 
-    public function getFilePreview($file)
+    public function getFilePreview($file, $isPreview)
     {
         switch ($this->detectFileType($file)) {
             case 'image':
-
-                if ($this->disk_has_url) {
+                if ($this->disk_has_url && $isPreview) {
                     $url = $this->storage->url($file);
                     $preview = "<span class=\"file-icon has-img\"><img src=\"$url\" alt=\"Attachment\"></span>";
                 } else {
