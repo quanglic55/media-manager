@@ -26,6 +26,7 @@ trait BootExtension
         parent::routes(function ($router) {
             /* @var \Illuminate\Routing\Router $router */
             $router->get('media', 'OpenAdmin\Admin\Media\MediaController@index')->name('media-index');
+            $router->get('media/picker', 'OpenAdmin\Admin\Media\MediaController@picker')->name('media-picker');
             $router->get('media/download', 'OpenAdmin\Admin\Media\MediaController@download')->name('media-download');
             $router->delete('media/delete', 'OpenAdmin\Admin\Media\MediaController@delete')->name('media-delete');
             $router->put('media/move', 'OpenAdmin\Admin\Media\MediaController@move')->name('media-move');
