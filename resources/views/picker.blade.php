@@ -111,7 +111,8 @@
         $(document).ready(function () {
             $('.file-item').click(function () {
                 var filePath = $(this).data('path');
-                window.opener.document.getElementById('selectedFile').value = filePath;
+                window.opener.document.getElementById('selectedFile').value = filePath; 
+                window.opener.document.getElementById('send-message-btn').click(); // send-message-btn
                 window.close();
             });
         });
