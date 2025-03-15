@@ -14,9 +14,15 @@
                 {!! $item['preview'] !!}
 
                 <div class="file-info">
-                    <a @if(!$item['isDir'])target="_blank"@endif href="{{ $item['link'] }}" class="file-name" title="{{ $item['name'] }}">
-                        {{ $item['icon'] }} {{ basename($item['name']) }}
-                    </a>
+                    @if (!$item['isDir']) 
+                        <a target="_blank" href="{{ $item['url'] }}" class="file-name" title="{{ $item['name'] }}">
+                            {{ $item['icon'] }} {{ basename($item['name']) }}
+                        </a>
+                    @else 
+                        <a href="{{ $item['link'] }}" class="file-name" title="{{ $item['name'] }}">
+                            {{ $item['icon'] }} {{ basename($item['name']) }}
+                        </a>
+                    @endif
                     <span class="file-size">
                       {{ $item['size'] }}&nbsp;
                     </span>
@@ -27,22 +33,6 @@
                         @else
                             <a href="javascript:{{$fn}}('{{ $item['url'] }}','{{ $item['name'] }}');@if ($close) window.close();@endif" class="btn btn-primary">{{ trans('admin.select') }}</a>
                         @endif
-                    @else
-                    <div class="btn-group btn-group-sm float-end">
-                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-bs-toggle="dropdown">
-                            <span class="caret"></span>
-                            <span class="sr-only">Toggle Dropdown</span>
-                        </button>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#" class="dropdown-item file-rename" data-bs-toggle="modal" data-bs-target="#moveModal" data-name="{{ $item['name'] }}">Rename & Move</a></li>
-                            <li><a href="#" class="dropdown-item file-delete" data-path="{{ $item['name'] }}">Delete</a></li>
-                            @unless($item['isDir'])
-                            <li><a target="_blank" class="dropdown-item" href="{{ $item['download'] }}">Download</a></li>
-                            @endunless
-                            <li class="divider"></li>
-                            <li><a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#urlModal" data-url="{{ $item['url'] }}">Url</a></li>
-                        </ul>
-                    </div>
                     @endif
 
                 </div>
