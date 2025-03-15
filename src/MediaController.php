@@ -44,38 +44,6 @@ class MediaController extends Controller
             }
         });
     }
-    
-    public function picker(Request $request, Content $content)
-    {
-        // check permission, only the roles with permission `create-page` can visit this action 
-        // return Admin::content(function (Content $content) use ($request) {
-            $path = $request->get('path', '/');
-            $view = $request->get('view', 'table');
-            $select = $request->get('select', false);
-            $close = $request->get('close', false);
-            $fn = $request->get('fn', 'selectFile');
-
-            $manager = new MediaManager($path);
-            $manager->select_fn = $fn;
-
-            // $content->header('Media manager');
-            // $content->view("open-admin-media::picker", [
-            //     'list'      => $manager->ls(),
-            //     'view'      => $view,
-            //     'nav'       => $manager->navigation(),
-            //     'url'       => $manager->urls(),
-            //     'close'     => $close,
-            //     'select'    => $select,
-            //     'fn'        => $fn,
-            // ]);
-            
-        return view('open-admin-media::picker', ['list' => $manager->ls('media-picker', false)]);
-
-            // if ($select) {
-            //     $content->addBodyClass('hide-nav');
-            // }
-        // });
-    }
 
     public function download(Request $request)
     {
