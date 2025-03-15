@@ -4,6 +4,7 @@ namespace OpenAdmin\Admin\Media;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 use OpenAdmin\Admin\Facades\Admin;
 use OpenAdmin\Admin\Layout\Content;
 use OpenAdmin\Admin\Auth\Database\Permission;
@@ -43,6 +44,38 @@ class MediaController extends Controller
                 $content->addBodyClass('hide-nav');
             }
         });
+    }
+    
+    public function picker(Request $request, Content $content)
+    {
+        // check permission, only the roles with permission `create-page` can visit this action 
+        // return Admin::content(function (Content $content) use ($request) {
+            $path = $request->get('path', '/');
+            $view = $request->get('view', 'table');
+            $select = $request->get('select', false);
+            $close = $request->get('close', false);
+            $fn = $request->get('fn', 'selectFile');
+
+            $manager = new MediaManager($path);
+            $manager->select_fn = $fn;
+
+            // $content->header('Media manager');
+            // $content->view("open-admin-media::picker", [
+            //     'list'      => $manager->ls(),
+            //     'view'      => $view,
+            //     'nav'       => $manager->navigation(),
+            //     'url'       => $manager->urls(),
+            //     'close'     => $close,
+            //     'select'    => $select,
+            //     'fn'        => $fn,
+            // ]);
+            
+        return view('open-admin-media::picker', ['list' => $manager->ls('media-picker', false)]);
+
+            // if ($select) {
+            //     $content->addBodyClass('hide-nav');
+            // }
+        // });
     }
 
     public function download(Request $request)
@@ -115,7 +148,7 @@ class MediaController extends Controller
         $slug_new = "documents.".str_replace("/", ".", $new);
         $permission = Permission::where('slug', $slug)->first();
         $permission->slug = $slug_new;
-        $permission->name = $slug_new;
+        $permission->name = str_replace("documents.", "Tài liệu - ", $slug_new);
 
         try {
             if ($manager->move($new) && $permission->save()) {
@@ -146,10 +179,11 @@ class MediaController extends Controller
         else {
             $slug = "documents".str_replace("/", ".", "/".$name);
         }
-        $permission = new Permission(['name' => $slug, 'slug' => $slug]);
+        $permission = new Permission(['name' => str_replace("documents.", "Tài liệu - ", $slug), 'slug' => $slug]);
 
         try {
             if ($manager->newFolder($name) && $permission->save()) {
+                
                 return response()->json([
                     'status'  => true,
                     'message' => trans('admin.move_succeeded'),
