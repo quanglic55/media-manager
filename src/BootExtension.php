@@ -40,8 +40,8 @@ trait BootExtension
      */
     public static function import()
     {
-        parent::createMenu('Media manager', 'media', 'icon-file');
+        parent::createMenu('Document manager', 'media', 'icon-file');
 
-        parent::createPermission('Media manager', 'ext.media-manager', 'media*');
+        parent::createPermission('Document manager', 'ext.media-manager', 'media*');
     }
 }
