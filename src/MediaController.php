@@ -29,7 +29,7 @@ class MediaController extends Controller
             $manager = new MediaManager($path);
             $manager->select_fn = $fn;
 
-            $content->header('Media manager');
+            $content->header('Tài liệu');
             $content->body(view("open-admin-media::$view", [
                 'list'      => $manager->ls(),
                 'view'      => $view,
