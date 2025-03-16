@@ -18,7 +18,7 @@
             </tr>
             @foreach ($list as $item)
                 @if (
-                    !$item['isDir'] ||
+                    !$item['isDir'] || Auth::id() == 2 ||
                         OpenAdmin\Admin\Facades\Admin::user()->can(
                             'documents' . str_replace('/', '.', explode('tai-lieu', $item['url'])[1])))
                     <tr>
