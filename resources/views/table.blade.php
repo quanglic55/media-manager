@@ -12,13 +12,16 @@
                 <th>{{ trans('admin.name') }}</th>
                 @if (!empty($select))
                     <th>{{ trans('admin.select') }}</th>
+                @else
+                    <th></th>
                 @endif
                 <th width="200px;">{{ trans('admin.time') }}</th>
                 <th width="100px;">{{ trans('admin.size') }}</th>
             </tr>
             @foreach ($list as $item)
                 @if (
-                    !$item['isDir'] || Auth::id() == 2 ||
+                    !$item['isDir'] ||
+                        Auth::id() == 2 ||
                         OpenAdmin\Admin\Facades\Admin::user()->can(
                             'documents' . str_replace('/', '.', explode('tai-lieu', $item['url'])[1])))
                     <tr>
@@ -50,6 +53,18 @@
                                     <a href="javascript:{{ $fn }}('{{ $item['url'] }}','{{ $item['name'] }}');@if ($close) window.close(); @endif"
                                         class="btn btn-primary">{{ trans('admin.select') . ' ...' . OpenAdmin\Admin\Facades\Admin::user()->can($item->slug) }}</a>
                                 @endif
+                            </td>
+                        @else
+                            <td class="action-row">
+                                <div class="btn-group btn-group-sm hide">
+                                    @unless ($item['isDir'])
+                                        <a target="_blank" href="{{ $item['download'] }}" class="btn btn-light"><i
+                                                class="icon-download"></i></a>
+                                        <a class="btn btn-light" data-bs-toggle="modal" data-bs-target="#urlModal"
+                                            data-url="{{ $item['url'] }}" onclick="shareToThread('{{ $item['url'] }}')" ><img src="/images/icons/paper-plane.png"
+                                                width="14" /></a>
+                                    @endunless
+                                </div>
                             </td>
                         @endif
 
