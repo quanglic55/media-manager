@@ -9,8 +9,8 @@
 
 <div class="modal fade" id="urlModal" tabindex="-1" role="dialog" aria-labelledby="urlModalLabel">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <iframe id="urlModal_Frame" src="https://lic-ems.local/ems/messages/share?file=" title="Chia sẻ tới nhóm chat"></iframe>
+        <div class="modal-content" style="max-width: 600px;">
+            <iframe id="urlModal_Frame" src="https://lic-ems.local/ems/messages/share?file=" height="600" title="Chia sẻ tới nhóm chat"></iframe>
         </div>
     </div>
 </div>
